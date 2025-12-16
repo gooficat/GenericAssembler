@@ -29,13 +29,7 @@ namespace GSM
 	public:
 		ByteBlock GetBytes ( ) const override
 		{
-			ByteBlock output;
-			for ( std::uint8_t i = 0; i != int ( size ); ++i )
-			{
-				output.push_back ( ( data >> ( 8 * i ) ) & 0xFF );
-			}
-
-			return output;
+			return ExtractBytes ( data , size );
 		}
 		ByteSize size;
 	private:
