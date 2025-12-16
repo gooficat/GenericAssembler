@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="6502Assembler/6502Assembler.vcxproj" Id="2da7e5a3-e35f-46f6-a9d3-0c55b36b99b5" />
+  <Project Path="GenericAssembler/GenericAssembler.vcxproj" Id="ca6c325f-6d2f-4ba0-b57e-6807211ac2de" />
+</Solution>
