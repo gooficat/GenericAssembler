@@ -135,7 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\6502Assembler\Instruction.ixx" />
+    <ClCompile Include="Definitions.ixx" />
     <ClCompile Include="GenericAssembler.ixx" />
     <ClCompile Include="Lexer.ixx" />
     <ClCompile Include="Unit.ixx" />

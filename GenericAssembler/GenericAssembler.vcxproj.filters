@@ -2,8 +2,8 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="GenericAssembler.ixx" />
-    <ClCompile Include="..\6502Assembler\Instruction.ixx" />
     <ClCompile Include="Unit.ixx" />
     <ClCompile Include="Lexer.ixx" />
+    <ClCompile Include="Definitions.ixx" />
   </ItemGroup>
 </Project>

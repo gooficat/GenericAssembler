@@ -1,7 +1,7 @@
 export module GSM;
 export import :Unit;
-export import :Instruction;
 export import :Lexer;
+export import :Definitions;
 
 
 import std;
@@ -12,6 +12,4 @@ export namespace GSM
 	{
 		std::cout << "Hello from GSM!" << std::endl;
 	}
-
-	export using ByteBlock = std::vector<std::uint8_t>;
 };
