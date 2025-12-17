@@ -3,5 +3,8 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="GSM/GSM.vcxproj" />
+  <Project Path="Assembler6502/Assembler6502.vcxproj" Id="3925d6dd-64f4-4bae-9f55-9eb39526a08b">
+    <BuildDependency Project="GSM/GSM.vcxproj" />
+  </Project>
+  <Project Path="GSM/GSM.vcxproj" Id="f6ee2580-c1f0-4155-bd47-1a82271b5fa6" />
 </Solution>
