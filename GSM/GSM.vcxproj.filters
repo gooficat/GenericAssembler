@@ -4,8 +4,6 @@
     <ClCompile Include="GSM.ixx" />
     <ClCompile Include="Definitions.ixx" />
     <ClCompile Include="Utility.ixx" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Instruction.ixx" />
+    <ClCompile Include="Instruction.ixx" />
   </ItemGroup>
 </Project>

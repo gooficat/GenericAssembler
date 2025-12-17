@@ -6,7 +6,6 @@ import :Utility;
 
 namespace GSM
 {
-
 	export struct Argument
 	{
 		Argument ( const ArgumentType & type ) : type ( type )

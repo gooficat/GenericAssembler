@@ -1,6 +1,6 @@
 export module GSM;
-export import :Definitions;
 export import :Instruction;
+export import :Definitions;
 export import :Utility;
 
 import std;
