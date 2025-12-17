@@ -27,6 +27,14 @@ namespace GSM
 		Memory ,
 	};
 
+	export enum class Operator : Token
+	{
+		ADD = '+' ,
+		SUB = '-' ,
+		MUL = '*' ,
+		DIV = '/' ,
+	};
+
 	// the user should inherit these types in an enum class
 
 	// most systems have different register types, for example x86-64 has general, stack pointer, index, segment, and floating point

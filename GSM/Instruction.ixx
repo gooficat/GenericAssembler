@@ -6,13 +6,16 @@ import :Utility;
 
 namespace GSM
 {
+	export struct IArgument
+	{
+		virtual std::vector<Byte> GetBytes ( ) const = 0;
+	};
+
 	export struct Argument
 	{
 		Argument ( const ArgumentType & type ) : type ( type )
 		{ }
 		const ArgumentType type;
-
-		virtual std::vector<Byte> GetBytes ( ) const = 0;
 	};
 
 	export struct RegisterArgument : Argument
@@ -42,7 +45,34 @@ namespace GSM
 		const ByteLength byte_length;
 	};
 
+	export struct OperatingArgument
+	{
+		OperatingArgument ( Argument * argument , const Operator operation ) : operation ( operation )
+		{
+			this->argument = std::shared_ptr<Argument> ( argument );
+		}
 
+		std::shared_ptr<Argument> argument;
+		Operator operation;
+	};
+
+	export struct MemoryArgument : Argument
+	{
+		MemoryArgument ( Argument * _base , const std::vector<OperatingArgument> & applications ) :
+			Argument ( ArgumentType::Memory )
+		{
+			//for ( auto & op : applications )
+			//{
+			//	this->applications.emplace_back ( )
+			//}
+			this->applications = applications;
+			this->base = std::unique_ptr <Argument> ( _base );
+		}
+		std::unique_ptr<Argument> base; // the "base" argument, can be any of the other types of argument
+		std::vector<OperatingArgument> applications; // the other arguments that may be applied onto the base one
+
+		virtual std::vector<Byte> GetBytes ( ) const = 0; // this one is different because it is always dependent on the system. There is no "catch-all" solution for encoding
+	};
 
 	export struct Instruction
 	{
