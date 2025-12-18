@@ -9,6 +9,7 @@ lda x, 32
 
 //class Instruction : public GSM::Instruction
 //{
+//public:
 //
 //};
 

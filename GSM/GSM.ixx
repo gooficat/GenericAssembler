@@ -26,6 +26,8 @@ export namespace GSM
 			{
 				std::cout << unprocessed_token << std::endl;
 
+				std::size_t i_before = i;
+
 				std::string next_token = FetchUnprocessedToken ( input , i );
 				if ( !next_token.size ( ) )
 				{
@@ -39,7 +41,8 @@ export namespace GSM
 				}
 				else
 				{
-					auto instruction_contents = FetchInstructionArguments ( input , i , next_token );
+					i = i_before;
+					auto instruction_contents = FetchInstructionArguments ( input , i );
 
 					Instruction instruction;
 					instruction.mnemonic = unprocessed_token;
@@ -47,7 +50,7 @@ export namespace GSM
 					for ( auto & arg : instruction_contents )
 					{
 						for ( auto & tok : arg )
-							std::cout << tok << std::endl;
+							std::cout << "Arg: " << tok << std::endl;
 
 						instruction.AddArgument ( arg );
 					}
@@ -59,24 +62,26 @@ export namespace GSM
 			}
 		}
 
-		virtual std::vector<std::vector<std::string>> FetchInstructionArguments ( const std::string & input , std::size_t & i , std::string buffered_token )
+		virtual std::vector<std::vector<std::string>> FetchInstructionArguments ( const std::string & input , std::size_t & i )
 		{
-			std::vector<std::vector<std::string>> arguments {
-				{
-					buffered_token
-				}
-			};
+			std::vector<std::vector<std::string>> arguments;
+
+			std::string buffered_token;
 
 			for ( ;; )
 			{
-				if ( buffered_token == "" )
-					break;
-				else if ( buffered_token == "," )
-					arguments.emplace_back ( );
-				else
-					arguments.back ( ).push_back ( buffered_token );
+				arguments.emplace_back ( );
+				buffered_token = FetchUnprocessedToken ( input , i ); // fetch one argument. this is flawed due to the possibility of an arg containing things like offsets and dereference brackets
+				arguments.back ( ).push_back ( buffered_token );
+				std::size_t i_before = i;
+				buffered_token = FetchUnprocessedToken ( input , i ); // fetch the next one. it should be a comma or we are at the end of the argument list
 
-				buffered_token = FetchUnprocessedToken ( input , i );
+
+				if ( buffered_token != "," )
+				{
+					i = i_before;
+					break;
+				}
 			}
 
 			return arguments;

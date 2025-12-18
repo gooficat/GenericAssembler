@@ -11,7 +11,7 @@ namespace GSM
 		virtual std::vector<Byte> GetBytes ( ) const = 0;
 	};
 
-	export struct Argument
+	export struct Argument : IArgument
 	{
 		Argument ( const ArgumentType & type ) : type ( type )
 		{ }
@@ -23,7 +23,7 @@ namespace GSM
 		RegisterArgument ( const Register value ) : Argument ( ArgumentType::Register ) , value ( value )
 		{ }
 
-		virtual std::vector<Byte> GetBytes ( )
+		virtual std::vector<Byte> GetBytes ( ) const override
 		{
 			return { value };
 		}
@@ -36,7 +36,7 @@ namespace GSM
 		ImmediateArgument ( const MaxInt value , const ByteLength byte_length ) : Argument ( ArgumentType::Immediate ) , value ( value ) , byte_length ( byte_length )
 		{ }
 
-		virtual std::vector<Byte> GetBytes ( )
+		virtual std::vector<Byte> GetBytes ( ) const override
 		{
 			return Utility::ExtractBytes ( value , byte_length );
 		}
@@ -71,7 +71,10 @@ namespace GSM
 		std::unique_ptr<Argument> base; // the "base" argument, can be any of the other types of argument
 		std::vector<OperatingArgument> applications; // the other arguments that may be applied onto the base one
 
-		virtual std::vector<Byte> GetBytes ( ) const = 0; // this one is different because it is always dependent on the system. There is no "catch-all" solution for encoding
+		virtual std::vector<Byte> GetBytes ( ) const override
+		{
+			return std::vector<Byte> ( ); // perhaps there is a way to avoid this?
+		} // this one is different because it is always dependent on the system. There is no "catch-all" solution for encoding. So this is really a placeholder.
 	};
 
 	export struct Instruction
@@ -98,23 +101,63 @@ namespace GSM
 			arguments.emplace_back ( argument );
 		}
 
+		virtual std::uint8_t DeduceLength ( ) const
+		{
+			return 1 + arguments.size ( ); // This may be a case of being entirely platform specific but I'll leave this anyway because there may be cases where it makes sense
+		}
+
 		Argument * ParseArgument ( const std::vector<std::string> & argument_tokens )
 		{
 			if ( argument_tokens.at ( 0 ).at ( 0 ) == '[' ) // beginning of a memory argument
 			{
-				// TODO
+				return InterpretMemoryArgument ( argument_tokens );
 			}
 			else if ( std::isdigit ( argument_tokens.at ( 0 ).at ( 0 ) ) )
 			{
-				auto arg = InterpretImmediateArgument ( argument_tokens.at ( 0 ) );
+				return InterpretImmediateArgument ( argument_tokens.at ( 0 ) );
 			}
 			else
 			{
-				// this will require there to be something which gives it the labels and the registers so that it may determine which it is. If it is a label it must become an immediate argument
+				return InterpretAlphaArgument ( argument_tokens.at ( 0 ) );
 			}
 		}
 
-		Argument * InterpretImmediateArgument ( const std::string & token )
+		Argument * InterpretAlphaArgument ( const std::string & token )
+		{
+			// TODO this will require there to be something which gives it the labels and the registers so that it may determine which it is. If it is a label it must become an immediate argument. For now, let's treat it as registers.
+			return InterpretRegisterArgument ( token );
+		}
+
+		virtual Register FindRegister ( const std::string & mnemonic ) const
+		{
+			return Register ( 0x02 ); // TODO
+		}
+
+		RegisterArgument * InterpretRegisterArgument ( const std::string & token )
+		{
+			return new RegisterArgument ( FindRegister ( token ) );
+		}
+
+		MemoryArgument * InterpretMemoryArgument ( const std::vector<std::string> & tokens )
+		{
+			auto base = ParseArgument ( { tokens.at ( 1 ) } );
+
+			std::vector<OperatingArgument> operations;
+
+			for ( auto i = 2; i < tokens.size ( ) - 1; ++i )
+			{
+				auto op = Operator ( tokens.at ( i ).at ( 0 ) );
+				auto left = ParseArgument ( { tokens.at ( ++i ) } );
+
+				operations.emplace_back ( op , left );
+			}
+
+			auto argument = new MemoryArgument ( base , operations );
+
+			return argument;
+		}
+
+		ImmediateArgument * InterpretImmediateArgument ( const std::string & token )
 		{
 			auto value = std::stoull ( token.c_str ( ) );
 			return new ImmediateArgument ( value , Utility::DetermineMinimumByteLength ( value ) );

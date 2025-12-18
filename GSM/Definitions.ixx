@@ -33,6 +33,7 @@ namespace GSM
 		SUB = '-' ,
 		MUL = '*' ,
 		DIV = '/' ,
+		SCP = ':'
 	};
 
 	// the user should inherit these types in an enum class
