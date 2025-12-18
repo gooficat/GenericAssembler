@@ -81,6 +81,8 @@ export namespace GSM
 			for ( ;; )
 			{
 				arguments.emplace_back ( );
+
+			keep_placing:
 				buffered_token = FetchUnprocessedToken ( input , i );
 
 				arguments.back ( ).push_back ( buffered_token );
@@ -89,19 +91,33 @@ export namespace GSM
 				// Potential solution to the problem of reading multi-token arguments
 				if ( buffered_token.at ( 0 ) == '[' )
 				{
+					std::uint8_t indirection_counter = 1;
 					do
 					{
 						buffered_token = FetchUnprocessedToken ( input , i );
+						switch ( buffered_token.at ( 0 ) )
+						{
+						case '[':
+							++indirection_counter;
+							break;
+						case ']':
+							--indirection_counter;
+						default:
+							break;
+						}
 						std::cout << "buffered mem: " << buffered_token << std::endl;
 						arguments.back ( ).push_back ( buffered_token );
-					} while ( buffered_token.at ( 0 ) != ']' );
+					} while ( indirection_counter );
 				}
 
 				std::size_t i_before = i;
 				buffered_token = FetchUnprocessedToken ( input , i ); // fetch the next one. it should be a comma or we are at the end of the argument list
-
-
-				if ( buffered_token != "," )
+				if ( buffered_token.size ( ) == 1 and buffered_token.at ( 0 ) != ',' )
+				{
+					arguments.back ( ).push_back ( buffered_token );
+					goto keep_placing; // woo scary!
+				}
+				else if ( buffered_token.size ( ) == 0 or buffered_token.at ( 0 ) != ',' )
 				{
 					i = i_before;
 					break;
@@ -132,9 +148,10 @@ export namespace GSM
 			while ( std::isalnum ( input.at ( i ) ) );
 
 			else
-				do
-					buffer += input.at ( i++ );
-			while ( not std::isalnum ( input.at ( i ) ) and not std::isspace ( input.at ( i ) ) );
+				buffer += input.at ( i++ );
+			/*do
+				buffer += input.at ( i++ );
+		while ( not std::isalnum ( input.at ( i ) ) and not std::isspace ( input.at ( i ) ) );*/ // It's a nice piece of code, but it causes some small annoyances in assembly!
 
 			return buffer;
 		}

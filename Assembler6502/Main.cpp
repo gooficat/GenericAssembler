@@ -5,6 +5,12 @@ static std::unordered_map<std::string , GSM::Register> Registers {
 	{"x", 0x00 }
 };
 
+class InstructionProfile : public GSM::InstructionProfile
+{
+public:
+	GSM::Byte opcode;
+};
+
 class Instruction : public GSM::Instruction
 {
 public:
@@ -16,6 +22,9 @@ public:
 	std::vector<GSM::Byte> Encode ( ) const override
 	{
 		std::vector<GSM::Byte> out;
+
+
+
 		return out;
 	}
 
@@ -23,19 +32,19 @@ public:
 	{
 		return 0;
 	}
+
+	using ArgType = GSM::ArgumentType;
+	inline static std::vector<InstructionProfile> InstructionSet {
+		{"LDA", {ArgType::Immediate}, 0x00},
+		{"LDA", {ArgType::Memory}, 0x01},
+	};
 };
 
-using ArgType = GSM::ArgumentType;
-
-static std::vector<GSM::InstructionProfile> InstructionSet {
-	{"LDA", {ArgType::Immediate}},
-	{"LDA", {ArgType::Memory}},
-};
 
 
 static const std::string test_data = R"(
 main:
-	lda x, [32]
+	lda x, [32]+12
 )";
 
 class Assembler : public GSM::Assembler
@@ -52,6 +61,7 @@ public:
 			std::println ( "instruction: {}, {} args" , ins->mnemonic , ins->arguments.size ( ) );
 		}
 	}
+
 private:
 };
 
