@@ -47,8 +47,11 @@ public:
 
 		FeedString ( test_data );
 
-
-	} // 145
+		for ( auto & ins : instructions )
+		{
+			std::println ( "instruction: {}, {} args" , ins->mnemonic , ins->arguments.size ( ) );
+		}
+	}
 private:
 };
 
