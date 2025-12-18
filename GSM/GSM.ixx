@@ -39,7 +39,18 @@ export namespace GSM
 				}
 				else
 				{
-					auto instruction_contents = FetchInstructionArguments ( input , i );
+					auto instruction_contents = FetchInstructionArguments ( input , i , next_token );
+
+					Instruction instruction;
+					instruction.mnemonic = unprocessed_token;
+
+					for ( auto & arg : instruction_contents )
+					{
+						for ( auto & tok : arg )
+							std::cout << tok << std::endl;
+
+						instruction.AddArgument ( arg );
+					}
 				}
 
 				unprocessed_token = FetchUnprocessedToken (
@@ -48,15 +59,27 @@ export namespace GSM
 			}
 		}
 
-		virtual std::vector<std::unique_ptr<Argument>> FetchInstructionArguments ( const std::string & input , std::size_t & i )
+		virtual std::vector<std::vector<std::string>> FetchInstructionArguments ( const std::string & input , std::size_t & i , std::string buffered_token )
 		{
-			std::vector<std::unique_ptr<Argument>> arguments;
-			bool exit = false;
-			while ( !exit )
+			std::vector<std::vector<std::string>> arguments {
+				{
+					buffered_token
+				}
+			};
+
+			for ( ;; )
 			{
-				auto token_str = FetchUnprocessedToken ( input , i );
-				if ( token_str.at ( i ) == '' )
+				if ( buffered_token == "" )
+					break;
+				else if ( buffered_token == "," )
+					arguments.emplace_back ( );
+				else
+					arguments.back ( ).push_back ( buffered_token );
+
+				buffered_token = FetchUnprocessedToken ( input , i );
 			}
+
+			return arguments;
 		}
 
 		virtual void InterpretLabel ( const std::string & name )
@@ -72,11 +95,13 @@ export namespace GSM
 
 		std::string FetchUnprocessedToken ( const std::string & input , std::size_t & i )
 		{
+			std::string buffer = "";
+			if ( i >= input.size ( ) )
+				return buffer;
+
 			while ( std::isspace ( input.at ( i ) ) )
 				if ( ++i >= input.size ( ) )
-					return "";
-
-			std::string buffer = "";
+					return buffer;
 
 			if ( std::isalnum ( input.at ( i ) ) )
 				do

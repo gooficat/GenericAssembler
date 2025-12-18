@@ -77,19 +77,47 @@ namespace GSM
 	export struct Instruction
 	{
 		std::string mnemonic;
-		std::vector<Argument> arguments;
+		std::vector <std::unique_ptr< Argument >> arguments;
 
-		bool operator== ( const Instruction & other )
+		auto operator== ( const Instruction & other )
 		{
 			if ( mnemonic == other.mnemonic or
 				arguments.size ( ) != other.arguments.size ( ) )
 				return false;
 
 			for ( std::uint8_t i = 0; i != arguments.size ( ); ++i )
-				if ( arguments.at ( i ).type != other.arguments.at ( i ).type )
+				if ( arguments.at ( i )->type != other.arguments.at ( i )->type )
 					return false;
 
 			return true;
+		}
+
+		auto AddArgument ( const std::vector<std::string> & argument_tokens )
+		{
+			auto argument = ParseArgument ( argument_tokens );
+			arguments.emplace_back ( argument );
+		}
+
+		Argument * ParseArgument ( const std::vector<std::string> & argument_tokens )
+		{
+			if ( argument_tokens.at ( 0 ).at ( 0 ) == '[' ) // beginning of a memory argument
+			{
+				// TODO
+			}
+			else if ( std::isdigit ( argument_tokens.at ( 0 ).at ( 0 ) ) )
+			{
+				auto arg = InterpretImmediateArgument ( argument_tokens.at ( 0 ) );
+			}
+			else
+			{
+				// this will require there to be something which gives it the labels and the registers so that it may determine which it is. If it is a label it must become an immediate argument
+			}
+		}
+
+		Argument * InterpretImmediateArgument ( const std::string & token )
+		{
+			auto value = std::stoull ( token.c_str ( ) );
+			return new ImmediateArgument ( value , Utility::DetermineMinimumByteLength ( value ) );
 		}
 	};
 }
