@@ -1,16 +1,9 @@
 import GSM;
+import std;
 
-std::unordered_map<std::string , GSM::Register> Registers = {
-	{ "x", 0x00 },
-	{ "y", 0x01 },
+static std::unordered_map<std::string , GSM::Register> Registers {
+	{"x", 0x00 }
 };
-
-
-
-static const std::string test_data = R"(
-main:
-	lda x, [32]
-)";
 
 class Instruction : public GSM::Instruction
 {
@@ -30,8 +23,20 @@ public:
 	{
 		return 0;
 	}
-
 };
+
+using ArgType = GSM::ArgumentType;
+
+static std::vector<GSM::InstructionProfile> InstructionSet {
+	{"LDA", {ArgType::Immediate}},
+	{"LDA", {ArgType::Memory}},
+};
+
+
+static const std::string test_data = R"(
+main:
+	lda x, [32]
+)";
 
 class Assembler : public GSM::Assembler
 {
@@ -41,6 +46,8 @@ public:
 		std::println ( "Hello from My 6502 Assembler!" );
 
 		FeedString ( test_data );
+
+
 	} // 145
 private:
 };

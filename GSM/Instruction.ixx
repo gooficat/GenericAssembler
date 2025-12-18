@@ -16,6 +16,10 @@ namespace GSM
 		Argument ( const ArgumentType & type ) : type ( type )
 		{ }
 		const ArgumentType type;
+		bool operator==( const ArgumentType & other )
+		{
+			return this->type == other;
+		}
 	};
 
 	export struct RegisterArgument : Argument
@@ -75,6 +79,12 @@ namespace GSM
 		{
 			return std::vector<Byte> ( ); // perhaps there is a way to avoid this?
 		} // this one is different because it is always dependent on the system. There is no "catch-all" solution for encoding. So this is really a placeholder.
+	};
+
+	export struct InstructionProfile
+	{
+		const std::string mnemonic;
+		const std::vector<ArgumentType> arguments;
 	};
 
 	export struct Instruction

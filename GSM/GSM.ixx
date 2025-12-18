@@ -1,9 +1,16 @@
+#include <cctype>
+#include <iosfwd>
+#include <memory>
+#include <ostream>
+#include <print>
+#include <string>
+#include <vector>
 export module GSM;
 export import :Instruction;
 export import :Definitions;
 export import :Utility;
 
-export import std;
+import std;
 
 export namespace GSM
 {
@@ -22,6 +29,7 @@ export namespace GSM
 			auto unprocessed_token = FetchUnprocessedToken (
 				input , i
 			);
+
 			while ( i < input.size ( ) )
 			{
 				std::size_t i_before = i;
@@ -30,8 +38,8 @@ export namespace GSM
 				if ( !next_token.size ( ) )
 				{
 					// next token is end of file. This means it must be an instruction
-					Instruction instruction;
-					instruction.mnemonic = unprocessed_token;
+					instructions.push_back ( std::make_unique<Instruction> ( ) );
+					instructions.back ( )->mnemonic = unprocessed_token;
 					break;
 				}
 				else if ( next_token.at ( 0 ) == ':' )
@@ -43,8 +51,8 @@ export namespace GSM
 					i = i_before;
 					auto instruction_contents = FetchInstructionArguments ( input , i );
 
-					Instruction instruction;
-					instruction.mnemonic = unprocessed_token;
+					instructions.push_back ( std::make_unique<Instruction> ( ) );
+					instructions.back ( )->mnemonic = unprocessed_token;
 					std::cout << "Mnemonic: " << unprocessed_token << std::endl;
 
 					for ( auto & arg : instruction_contents )
@@ -54,7 +62,7 @@ export namespace GSM
 							std::cout << " " << tok;
 						std::cout << std::endl;
 
-						instruction.AddArgument ( arg );
+						instructions.back ( )->AddArgument ( arg );
 					}
 				}
 
@@ -130,7 +138,8 @@ export namespace GSM
 
 			return buffer;
 		}
-
+		std::vector <std::unique_ptr< Instruction >> instructions;
+		//std::vector<std::string , MaxInt> labels;
 	private:
 	};
 }
