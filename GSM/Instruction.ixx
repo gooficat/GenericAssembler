@@ -149,7 +149,7 @@ namespace GSM
 				auto op = Operator ( tokens.at ( i ).at ( 0 ) );
 				auto left = ParseArgument ( { tokens.at ( ++i ) } );
 
-				operations.emplace_back ( op , left );
+				operations.emplace_back ( left , op );
 			}
 
 			auto argument = new MemoryArgument ( base , operations );
