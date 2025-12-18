@@ -101,9 +101,14 @@ namespace GSM
 			arguments.emplace_back ( argument );
 		}
 
-		virtual std::uint8_t DeduceLength ( ) const
+		virtual std::vector<GSM::Byte> Encode ( ) const // this should be overriden
 		{
-			return 1 + arguments.size ( ); // This may be a case of being entirely platform specific but I'll leave this anyway because there may be cases where it makes sense
+			return std::vector<GSM::Byte> ( );
+		}
+
+		virtual std::uint8_t DeduceLength ( ) const // this one too
+		{
+			return 1 + arguments.size ( );
 		}
 
 		Argument * ParseArgument ( const std::vector<std::string> & argument_tokens )
