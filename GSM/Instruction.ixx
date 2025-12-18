@@ -108,7 +108,7 @@ namespace GSM
 
 		virtual std::uint8_t DeduceLength ( ) const // this one too
 		{
-			return 1 + arguments.size ( );
+			return 1 + std::uint8_t ( arguments.size ( ) );
 		}
 
 		Argument * ParseArgument ( const std::vector<std::string> & argument_tokens )

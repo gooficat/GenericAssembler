@@ -49,9 +49,9 @@ export namespace GSM
 
 					for ( auto & arg : instruction_contents )
 					{
-						std::cout << "Arg: ";
+						std::cout << "Arg:";
 						for ( auto & tok : arg )
-							std::cout << tok << ", ";
+							std::cout << " " << tok;
 						std::cout << std::endl;
 
 						instruction.AddArgument ( arg );

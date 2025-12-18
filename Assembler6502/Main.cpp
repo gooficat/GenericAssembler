@@ -1,14 +1,11 @@
-#include <print>
 import GSM;
 
 std::unordered_map<std::string , GSM::Register> Registers = {
-	{ "a", 0x00 },
-	{ "x", 0x01 },
-	{ "y", 0x02 },
-	{ "pc", 0x03 },
-	{ "s", 0x04 },
-	{ "p", 0x05 } // this is not how it really works on a 6502, it's just for testing purposes
+	{ "x", 0x00 },
+	{ "y", 0x01 },
 };
+
+
 
 static const std::string test_data = R"(
 main:
