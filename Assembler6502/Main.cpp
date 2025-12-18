@@ -1,10 +1,9 @@
 #include <print>
 import GSM;
 
-std::string test_data = R"(
-
-lda x, 32
-
+static const std::string test_data = R"(
+main:
+	lda x, [32]
 )";
 
 //class Instruction : public GSM::Instruction
